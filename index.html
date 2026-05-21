@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PTMA Campaign Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,300;1,9..144,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #F5F3EE;
+  --surface:    #FDFCFA;
+  --card:       #FFFFFF;
+  --card2:      #F9F8F5;
+  --border:     #E8E4DC;
+  --borderMid:  #D4CEC4;
+  --navy:       #0E1828;
+  --navyMid:    #1E2D42;
+  --cyan:       #0EA5C9;
+  --cyanLight:  #E8F7FC;
+  --cyanBorder: #B3E4F2;
+  --teal:       #0D5C6B;
+  --gold:       #B8944A;
+  --goldLight:  #FAF3E7;
+  --goldBorder: #E8D4A8;
+  --green:      #1E6E47;
+  --greenLight: #EBF5EF;
+  --greenBorder:#A8D8BC;
+  --red:        #C0392B;
+  --redLight:   #FDEEEC;
+  --amber:      #C07420;
+  --amberLight: #FEF5E7;
+  --amberBorder:#F0D090;
+  --purple:     #5B3FA0;
+  --purpleLight:#F2EFFE;
+  --text:       #0E1828;
+  --textMid:    #4A5568;
+  --textSub:    #8896A8;
+  --textFaint:  #B8C4CF;
+  --display:    'Fraunces', Georgia, serif;
+  --body:       'DM Sans', system-ui, sans-serif;
+  --shadow:     0 1px 3px rgba(14,24,40,0.06), 0 4px 16px rgba(14,24,40,0.04);
+  --shadowMd:   0 4px 12px rgba(14,24,40,0.08), 0 12px 40px rgba(14,24,40,0.06);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(245,243,238,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex; align-items: center; gap: 16px;
+  height: 62px;
+}
+.header-logo {
+  font-family: var(--display);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 3px; color: var(--navy);
+  text-transform: uppercase;
+}
+.header-divider {
+  width: 1px; height: 22px;
+  background: var(--border);
+}
+.header-title {
+  font-family: var(--body);
+  font-size: 14px; font-weight: 500;
+  color: var(--navyMid);
+}
+.header-sub { font-size: 11px; color: var(--textSub); margin-top: 1px; }
+.header-right { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--body); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.5px; padding: 4px 10px; border-radius: 20px;
+  border: 1px solid; white-space: nowrap;
+}
+.badge-navy   { background: var(--navy);        color: #fff;             border-color: var(--navy); }
+.badge-cyan   { background: var(--cyanLight);   color: var(--teal);      border-color: var(--cyanBorder); }
+.badge-green  { background: var(--greenLight);  color: var(--green);     border-color: var(--greenBorder); }
+.badge-gold   { background: var(--goldLight);   color: var(--gold);      border-color: var(--goldBorder); }
+.badge-amber  { background: var(--amberLight);  color: var(--amber);     border-color: var(--amberBorder); }
+.badge-purple { background: var(--purpleLight); color: var(--purple);    border-color: #C4B3E8; }
+.badge-red    { background: var(--redLight);    color: var(--red);       border-color: #F0C0BC; }
+
+/* ── TABS ── */
+.tabs {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; overflow-x: auto;
+  padding: 0 20px;
+  scrollbar-width: none;
+  gap: 2px;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0;
+  padding: 14px 16px;
+  font-family: var(--body); font-size: 12px; font-weight: 500;
+  color: var(--textSub); background: none; border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.18s; white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+.tab:hover { color: var(--navyMid); }
+.tab.active { color: var(--navy); border-bottom-color: var(--cyan); font-weight: 600; }
+
+/* ── LAYOUT ── */
+.body { max-width: 960px; margin: 0 auto; padding: 32px 24px 100px; }
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+/* ── CARDS ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.card-cyan   { border-color: var(--cyanBorder);  background: linear-gradient(135deg, var(--card) 60%, var(--cyanLight) 100%); }
+.card-green  { border-color: var(--greenBorder); background: linear-gradient(135deg, var(--card) 60%, var(--greenLight) 100%); }
+.card-gold   { border-color: var(--goldBorder);  background: linear-gradient(135deg, var(--card) 60%, var(--goldLight) 100%); }
+.card-amber  { border-color: var(--amberBorder); background: linear-gradient(135deg, var(--card) 60%, var(--amberLight) 100%); }
+.card-purple { border-color: #C4B3E8;            background: linear-gradient(135deg, var(--card) 60%, var(--purpleLight) 100%); }
+
+/* ── TYPOGRAPHY ── */
+.page-eyebrow {
+  font-family: var(--body); font-size: 10px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase; color: var(--cyan);
+  margin-bottom: 6px;
+}
+.page-title {
+  font-family: var(--display); font-size: 28px; font-weight: 700;
+  color: var(--navy); margin-bottom: 6px; line-height: 1.2;
+  font-style: italic;
+}
+.page-sub { font-size: 14px; color: var(--textMid); margin-bottom: 28px; line-height: 1.65; max-width: 620px; }
+.section-label {
+  font-family: var(--body); font-size: 9px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--textSub);
+  margin-bottom: 10px;
+}
+.card-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--textSub); margin-bottom: 6px;
+}
+.card-title {
+  font-family: var(--display); font-size: 19px; font-weight: 700;
+  color: var(--navy); margin-bottom: 4px; font-style: italic;
+}
+.card-sub { font-size: 13px; color: var(--textMid); margin-bottom: 18px; line-height: 1.6; }
+
+/* ── FORM ── */
+label {
+  display: block; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--textMid); margin-bottom: 7px;
+}
+input, textarea, select {
+  width: 100%; background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px; color: var(--text);
+  padding: 11px 14px; font-size: 14px;
+  font-family: var(--body); outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(14,165,201,0.12);
+}
+textarea { resize: vertical; min-height: 90px; }
+select option { background: #fff; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+
+/* ── TOGGLE BUTTONS ── */
+.toggle-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.toggle {
+  padding: 8px 16px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--textMid); font-family: var(--body);
+  font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.18s;
+}
+.toggle:hover { border-color: var(--borderMid); color: var(--text); }
+.toggle.on-cyan   { background: var(--cyanLight);  color: var(--teal);   border-color: var(--cyanBorder); font-weight: 600; }
+.toggle.on-gold   { background: var(--goldLight);  color: var(--gold);   border-color: var(--goldBorder); font-weight: 600; }
+.toggle.on-green  { background: var(--greenLight); color: var(--green);  border-color: var(--greenBorder); font-weight: 600; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 18px; border-radius: 9px; border: none;
+  font-family: var(--body); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.18s; letter-spacing: 0.2px;
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--navy); color: #fff; }
+.btn-primary:not(:disabled):hover { background: var(--navyMid); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(14,24,40,0.18); }
+.btn-secondary { background: var(--surface); color: var(--textMid); border: 1px solid var(--border); }
+.btn-secondary:hover { color: var(--text); border-color: var(--borderMid); }
+.btn-copy { background: var(--card2); color: var(--textSub); border: 1px solid var(--border); padding: 5px 12px; font-size: 10px; border-radius: 6px; font-family: var(--body); font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.18s; }
+.btn-copy:hover { border-color: var(--borderMid); color: var(--textMid); }
+.btn-copy.copied { background: var(--greenLight); color: var(--green); border-color: var(--greenBorder); }
+
+/* ── GENERATE BUTTON ── */
+.generate-wrap { margin-top: 24px; }
+.generate-btn {
+  width: 100%; padding: 18px 24px; border-radius: 12px; border: none;
+  background: var(--navy);
+  color: #fff; font-family: var(--display);
+  font-size: 17px; font-weight: 700; font-style: italic;
+  letter-spacing: 0.3px; cursor: pointer;
+  transition: all 0.2s; position: relative; overflow: hidden;
+}
+.generate-btn:not(:disabled):hover {
+  background: var(--navyMid);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(14,24,40,0.22);
+}
+.generate-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.generate-hint { font-size: 11px; color: var(--textSub); margin-top: 8px; text-align: center; }
+
+/* ── STANDARD BANNER ── */
+.standard-banner {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navyMid) 100%);
+  border-radius: 12px; margin-bottom: 24px;
+  box-shadow: var(--shadowMd);
+}
+.standard-banner .mark {
+  width: 32px; height: 32px; background: var(--cyan);
+  border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.standard-banner .title {
+  font-family: var(--display); font-size: 14px; font-weight: 700;
+  color: #fff; font-style: italic; margin-bottom: 3px;
+}
+.standard-banner .sub { font-size: 10px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone {
+  border: 2px dashed var(--border); border-radius: 12px;
+  padding: 36px 24px; text-align: center;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 16px;
+  background: var(--card2);
+}
+.upload-zone:hover { border-color: var(--cyan); background: var(--cyanLight); }
+.upload-zone.has-files { border-color: var(--green); background: var(--greenLight); }
+.upload-icon { font-size: 26px; margin-bottom: 10px; }
+.upload-text { font-size: 13px; color: var(--textMid); line-height: 1.6; }
+.upload-files { font-size: 12px; color: var(--teal); margin-top: 6px; font-weight: 500; }
+
+/* ── LOADING ── */
+.loading { display: none; text-align: center; padding: 80px 24px; }
+.loading.active { display: block; }
+.loading-mark {
+  width: 56px; height: 56px; margin: 0 auto 24px;
+  border: 3px solid var(--border);
+  border-top-color: var(--cyan);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-title { font-family: var(--display); font-size: 22px; font-weight: 700; font-style: italic; color: var(--navy); margin-bottom: 8px; }
+.loading-sub { font-size: 14px; color: var(--textMid); margin-bottom: 28px; }
+.steps { max-width: 360px; margin: 0 auto; }
+.step { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--textSub); }
+.step.active { color: var(--teal); font-weight: 500; }
+.step.done { color: var(--green); }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.3s; }
+.step.active .step-dot { background: var(--cyan); box-shadow: 0 0 8px rgba(14,165,201,0.4); }
+.step.done .step-dot { background: var(--green); }
+
+/* ── EMPTY ── */
+.empty { text-align: center; padding: 80px 24px; }
+.empty-icon { font-size: 40px; margin-bottom: 16px; opacity: 0.4; }
+.empty-title { font-family: var(--display); font-size: 18px; font-weight: 600; font-style: italic; color: var(--textMid); margin-bottom: 6px; }
+.empty-sub { font-size: 13px; color: var(--textSub); }
+
+/* ── OUTPUT COMPONENTS ── */
+.output-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.kv { margin-bottom: 12px; }
+.kv .k { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--textSub); margin-bottom: 3px; }
+.kv .v { font-size: 13px; color: var(--textMid); line-height: 1.6; }
+.kv .v-navy   { color: var(--navy);  font-weight: 600; }
+.kv .v-cyan   { color: var(--teal);  font-weight: 500; }
+.kv .v-gold   { color: var(--gold);  font-weight: 500; }
+.kv .v-green  { color: var(--green); font-weight: 500; }
+
+.phase { padding: 16px; background: var(--card2); border-radius: 10px; border-left: 3px solid var(--cyan); margin-bottom: 12px; }
+.phase-title { font-family: var(--display); font-size: 14px; font-weight: 700; font-style: italic; color: var(--navy); margin-bottom: 2px; }
+.phase-timing { font-size: 11px; color: var(--textSub); margin-bottom: 10px; }
+
+.campaign-name { font-family: var(--display); font-size: 26px; font-weight: 800; font-style: italic; color: var(--navy); line-height: 1.2; margin-bottom: 8px; }
+
+.week-header {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+.week-label { font-family: var(--display); font-size: 13px; font-weight: 700; font-style: italic; color: var(--navy); }
+.week-theme { font-size: 12px; color: var(--textSub); }
+
+.post-card { padding: 16px 0; border-bottom: 1px solid var(--border); }
+.post-card:last-child { border-bottom: none; }
+.post-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.post-day { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--cyan); }
+.post-hook { font-size: 15px; font-weight: 500; color: var(--navy); line-height: 1.5; margin-bottom: 6px; }
+.post-detail { font-size: 12px; color: var(--textSub); margin-bottom: 3px; line-height: 1.5; }
+.post-capture { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; color: var(--amber); margin-top: 8px; padding: 8px 12px; background: var(--amberLight); border-radius: 7px; border-left: 2px solid var(--amberBorder); }
+
+.email-card { padding: 18px; background: var(--card2); border-radius: 10px; margin-bottom: 12px; border-left: 3px solid var(--green); }
+.email-card.ask { border-left-color: var(--gold); }
+.email-subject { font-family: var(--display); font-size: 15px; font-weight: 700; font-style: italic; color: var(--navy); margin-bottom: 4px; }
+.email-meta { font-size: 11px; color: var(--textSub); margin-bottom: 10px; }
+
+.dm-bubble { background: var(--surface); border: 1px solid var(--border); border-radius: 4px 12px 12px 12px; padding: 13px 16px; font-size: 13px; line-height: 1.7; color: var(--textMid); margin-bottom: 8px; }
+
+/* ── META AD PREVIEW ── */
+.ad-wrap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 18px; box-shadow: var(--shadow); }
+.ad-header { padding: 12px 14px; background: #fff; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: center; }
+.ad-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.ad-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.ad-tag { font-size: 10px; color: var(--textSub); }
+.ad-body { padding: 14px 16px; background: #fff; }
+.ad-primary { font-size: 13px; line-height: 1.75; color: var(--textMid); margin-bottom: 12px; }
+.ad-image-area { height: 150px; background: linear-gradient(135deg, var(--cyanLight) 0%, var(--bg) 100%); border: 1px dashed var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; padding: 16px; text-align: center; }
+.ad-footer { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.ad-headline { font-size: 14px; font-weight: 700; color: var(--navy); }
+.ad-description { font-size: 11px; color: var(--textSub); margin-top: 2px; }
+.ad-cta { background: var(--navy); color: #fff; border: none; padding: 9px 16px; border-radius: 7px; font-family: var(--body); font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+
+/* ── PAIN LEVELS ── */
+.pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.pain-box { padding: 14px; border-radius: 10px; }
+.pain-box.ext { background: var(--cyanLight); border: 1px solid var(--cyanBorder); }
+.pain-box.int { background: var(--amberLight); border: 1px solid var(--amberBorder); }
+.pain-box.phi { background: var(--purpleLight); border: 1px solid #C4B3E8; }
+.pain-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.pain-box.ext .pain-label { color: var(--teal); }
+.pain-box.int .pain-label { color: var(--amber); }
+.pain-box.phi .pain-label { color: var(--purple); }
+.pain-text { font-size: 12px; line-height: 1.6; color: var(--text); }
+
+/* ── KPI ROW ── */
+.kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.kpi-card { padding: 14px; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; text-align: center; }
+.kpi-label { font-size: 11px; color: var(--textMid); line-height: 1.4; }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .pain-grid { grid-template-columns: 1fr; }
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .page-title { font-size: 22px; }
+  .campaign-name { font-size: 20px; }
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">PTMA</div>
+  <div class="header-divider"></div>
+  <div>
+    <div class="header-title">Campaign Planner</div>
+    <div class="header-sub">Built to The PTMA Standard</div>
+  </div>
+  <div class="header-right" id="headerBadges"></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tabsEl">
+  <button class="tab active" onclick="showTab(0)">① Client Data</button>
+  <button class="tab" onclick="showTab(1)">② Coach Voice</button>
+  <button class="tab" onclick="showTab(2)">③ Campaign Brief</button>
+  <button class="tab" onclick="showTab(3)">④ Strategy</button>
+  <button class="tab" onclick="showTab(4)">⑤ Lead Gen + FEO</button>
+  <button class="tab" onclick="showTab(5)">⑥ Content Plan</button>
+  <button class="tab" onclick="showTab(6)">⑦ Email Sequence</button>
+  <button class="tab" onclick="showTab(7)">⑧ DM Scripts</button>
+  <button class="tab" id="manychatTab" style="display:none" onclick="showTab(8)">⑨ ManyChat</button>
+  <button class="tab" id="metaTab" style="display:none" onclick="showTab(9)">⑩ Meta Ads</button>
+</div>
+
+<div class="body">
+
+<!-- LOADING -->
+<div class="loading" id="loading">
+  <div class="loading-mark"></div>
+  <div class="loading-title">Building your campaign plan</div>
+  <div class="loading-sub">Applying The PTMA Standard across 9 frameworks</div>
+  <div class="steps">
+    <div class="step active" id="step0"><div class="step-dot"></div>Campaign strategy and WHY statement</div>
+    <div class="step" id="step1"><div class="step-dot"></div>Lead gen architecture and FEO</div>
+    <div class="step" id="step2"><div class="step-dot"></div>4-week content plan</div>
+    <div class="step" id="step3"><div class="step-dot"></div>6-email nurture sequence</div>
+    <div class="step" id="step4"><div class="step-dot"></div>DM scripts suite</div>
+    <div class="step" id="step5"><div class="step-dot"></div>Meta ads and retargeting</div>
+  </div>
+</div>
+
+<!-- PAGE 0: CLIENT DATA -->
+<div class="page active" id="page0">
+  <div class="page-eyebrow">Step One</div>
+  <div class="page-title">Client Language Intelligence</div>
+  <div class="page-sub">Upload testimonials, consultation notes, call transcripts or empathy maps. The tool mines the exact words your clients use and injects them into every output — making everything sharper and more specific.</div>
+  <div class="card" id="langCard">
+    <div class="card-eyebrow">Upload Client Data</div>
+    <div class="card-title">What did your clients say?</div>
+    <div class="card-sub">Testimonials, Google reviews, DM conversations, consultation notes, survey responses, empathy map content</div>
+    <div class="field">
+      <label>Upload a CSV or TXT file</label>
+      <input type="file" id="langFile"  style="width:100%;padding:10px;background:var(--card2);border:1px solid var(--border);border-radius:9px;font-family:var(--body);font-size:13px;color:var(--text);cursor:pointer">
+    </div>
+    <div class="field">
+      <label>Or paste text directly</label>
+      <textarea id="langText" placeholder="Paste testimonials, reviews, DM conversations, consultation notes..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="analyseLang()">Analyse Client Language</button>
+      <button class="btn btn-secondary" onclick="skipLang()">Skip for now</button>
+    </div>
+  </div>
+  <div class="card card-green" id="langResult" style="display:none">
+    <div class="output-row">
+      <span class="badge badge-green">✓ Client language confirmed</span>
+      <button class="btn-copy" onclick="resetLang()" style="margin-left:auto">Reset</button>
+    </div>
+    <div id="langResultInner"></div>
+  </div>
+</div>
+
+<!-- PAGE 1: COACH VOICE -->
+<div class="page" id="page1">
+  <div class="page-eyebrow">Step Two</div>
+  <div class="page-title">Coach Voice Profile</div>
+  <div class="page-sub">Upload past content, captions, podcast transcripts or DM examples. The tool extracts your tone, signature phrases and energy level so every output sounds like you — not AI-generated copy.</div>
+  <div class="card" id="voiceCard">
+    <div class="card-eyebrow">Upload Coach Content</div>
+    <div class="card-title">How do you naturally communicate?</div>
+    <div class="card-sub">Past social posts, captions, DMs, emails, podcast notes, video transcripts</div>
+    <label for="voiceFile" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card2);border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-bottom:12px;transition:all 0.18s">
+      <span style="font-size:22px">🎙️</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--navy)">Upload a file</div>
+        <div style="font-size:11px;color:var(--textSub);margin-top:2px">CSV or TXT — click here to choose</div>
+      </div>
+      <span id="voiceFileName" style="font-size:12px;color:var(--teal);margin-left:auto"></span>
+    </label>
+    <div class="field">
+      <label>Upload a CSV or TXT file</label>
+      <input type="file" id="voiceFile"  style="width:100%;padding:10px;background:var(--card2);border:1px solid var(--border);border-radius:9px;font-family:var(--body);font-size:13px;color:var(--text);cursor:pointer">
+    </div>
+    <div class="field">
+      <label>Or paste text directly</label>
+      <textarea id="voiceText" placeholder="Paste your past captions, DMs, post copy, emails..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="analyseVoice()">Extract Coach Voice</button>
+      <button class="btn btn-secondary" onclick="skipVoice()">Skip for now</button>
+    </div>
+  </div>
+  <div class="card card-purple" id="voiceResult" style="display:none">
+    <div class="output-row">
+      <span class="badge badge-purple">✓ Coach voice confirmed</span>
+      <button class="btn-copy" onclick="resetVoice()" style="margin-left:auto">Reset</button>
+    </div>
+    <div id="voiceResultInner"></div>
+  </div>
+</div>
+
+<!-- PAGE 2: CAMPAIGN BRIEF -->
+<div class="page" id="page2">
+  <div class="page-eyebrow">Step Three</div>
+  <div class="page-title">Your Campaign Brief</div>
+  <div class="page-sub">The decisions from Session 2 go here. The tool does the rest — building your full campaign plan to The PTMA Standard.</div>
+
+  <div class="card">
+    <div class="card-eyebrow">Your Offer</div>
+    <div class="card-title">What are you selling?</div>
+    <div class="grid-2" style="margin-top:16px">
+      <div class="field"><label>Your niche</label><input id="f_niche" placeholder="e.g. busy dads, post-natal mums, 40+ professionals"></div>
+      <div class="field"><label>Core offer name</label><input id="f_offer" placeholder="e.g. The 90-Day Father Figure Programme"></div>
+      <div class="field"><label>Offer price (£)</label><input id="f_price" type="number" placeholder="297"></div>
+      <div class="field"><label>Monthly revenue goal (£)</label><input id="f_goal" type="number" placeholder="5000"></div>
+      <div class="field"><label>Client LTV — lifetime value (£)</label><input id="f_ltv" type="number" placeholder="e.g. 1200 if client stays 4 months at £297"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-eyebrow">Campaign Details</div>
+    <div class="card-title">What is this campaign for?</div>
+    <div class="grid-2" style="margin-top:16px">
+      <div class="field">
+        <label>Campaign Objective</label>
+        <select id="f_obj">
+          <option value="leads">Generate leads — build the list</option>
+          <option value="launch">Launch the offer</option>
+          <option value="convert">Drive direct conversions</option>
+          <option value="reactivate">Reactivate warm or cold leads</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Campaign Month</label>
+        <select id="f_month">
+          <option>July 2026</option><option>August 2026</option><option>September 2026</option>
+          <option>June 2026</option><option>October 2026</option>
+        </select>
+      </div>
+      <div class="field"><label>Campaign Start Date</label><input id="f_start" type="date"></div>
+      <div class="field"><label>Launch Date</label><input id="f_launch" type="date"></div>
+    </div>
+    <div class="field">
+      <label>Delivery Format</label>
+      <div class="toggle-row">
+        <button class="toggle on-cyan" id="tog_f2f" onclick="setF2F(true)">Face-to-face + Online</button>
+        <button class="toggle" id="tog_online" onclick="setF2F(false)">Online Only</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-eyebrow">Optional Extras</div>
+    <div class="card-title">What else do you need?</div>
+    <div class="toggle-row" style="margin-top:14px">
+      <button class="toggle" id="tog_meta" onclick="toggleOpt('meta')">Meta Ad Copy</button>
+      <button class="toggle" id="tog_manychat" onclick="toggleOpt('manychat')">ManyChat Flow</button>
+      <button class="toggle" id="tog_retarget" onclick="toggleOpt('retarget')">Retargeting Ads</button>
+    </div>
+  </div>
+
+  <div class="generate-wrap">
+    <button class="generate-btn" id="genBtn" onclick="generate()">
+      Generate my campaign plan →
+    </button>
+    <div class="generate-hint">Applies 9 frameworks simultaneously · 10 to 15 seconds</div>
+  </div>
+</div>
+
+<!-- PAGE 3: STRATEGY -->
+<div class="page" id="page3">
+  <div id="stratOut"><div class="empty"><div class="empty-icon">✦</div><div class="empty-title">No campaign yet</div><div class="empty-sub">Complete the Campaign Brief to generate your plan</div></div></div>
+</div>
+
+<!-- PAGE 4: LEAD GEN -->
+<div class="page" id="page4">
+  <div id="leadOut"><div class="empty"><div class="empty-icon">✦</div><div class="empty-title">No campaign yet</div><div class="empty-sub">Complete the Campaign Brief to generate your plan</div></div></div>
+</div>
+
+<!-- PAGE 5: CONTENT -->
+<div class="page" id="page5">
+  <div id="contentOut"><div class="empty"><div class="empty-icon">✦</div><div class="empty-title">No campaign yet</div><div class="empty-sub">Complete the Campaign Brief to generate your plan</div></div></div>
+</div>
+
+<!-- PAGE 6: EMAILS -->
+<div class="page" id="page6">
+  <div id="emailOut"><div class="empty"><div class="empty-icon">✦</div><div class="empty-title">No campaign yet</div><div class="empty-sub">Complete the Campaign Brief to generate your plan</div></div></div>
+</div>
+
+<!-- PAGE 7: DMS -->
+<div class="page" id="page7">
+  <div id="dmOut"><div class="empty"><div class="empty-icon">✦</div><div class="empty-title">No campaign yet</div><div class="empty-sub">Complete the Campaign Brief to generate your plan</div></div></div>
+</div>
+
+<!-- PAGE 8: META -->
+<div class="page" id="page8">
+  <div id="metaOut"><div class="empty"><div class="empty-icon">✦</div><div class="empty-title">Meta Ads not enabled</div><div class="empty-sub">Toggle on Meta Ad Copy in the Campaign Brief</div></div></div>
+</div>
+
+</div><!-- /body -->
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+const S = { tab:0, lang:null, voice:null, langFiles:[], voiceFiles:[], f2f:true, opts:{meta:false,manychat:false,retarget:false}, res:{} };
+
+// ── THE PTMA STANDARD ──────────────────────────────────────────────────────
+const PTMA_STANDARD = `YOU ARE OPERATING TO THE PTMA STANDARD. Every output must meet every rule. No exceptions.
+
+RULE 1 — START WITH WHY (Sinek): Lead with belief and purpose. People buy WHY not WHAT. WHY content outperforms WHAT content every time.
+RULE 2 — CLIENT IS THE HERO (StoryBrand/Miller): Coach = guide with empathy + authority. Client = hero. Three pain levels: External (visible problem), Internal (how it makes them feel), Philosophical (why it is wrong they have this problem). One clear CTA every time.
+RULE 3 — SPECIFICITY IS THE ONLY DIFFERENTIATOR (Hormozi + James Smith + PTMA): NEVER write: lose weight, get fit, transform, feel better, busy professionals, achieve goals, level up. ALWAYS write the specific person, specific pain, specific outcome in exact client language. If content could belong to any coach anywhere, rewrite it.
+RULE 4 — THE VALUE EQUATION (Hormozi): VALUE = (Dream Outcome x Perceived Likelihood) divided by (Time Delay x Effort). Name offers to signal specific outcome and create a category of one. Stack value: outcome + method + speed + what they do not sacrifice.
+RULE 5 — TWO OFFERS NOT ONE (Hormozi + FMA + PTMA): Attention offer (lead magnet — so good it feels like it should cost money) AND Conversion offer (FEO — NOT a free consultation, delivers real value before the sales conversation). No campaign goes cold to core offer directly.
+RULE 6 — CONTENT RATIO (GaryVee + Hormozi): 80 percent value (jabs — stories, education, proof, community), 20 percent ask (right hooks — CTA, offer, sell). Never stack two asks in a row. Document do not manufacture. Show the thinking not just the result.
+RULE 7 — DOCUMENT NOT MANUFACTURE (Simon Booth + GaryVee + James Smith): Best content captures what the coach already does — sessions, gym floor moments, real client conversations, personal opinions, real failures. Story structure: Problem to Realisation to Shift to Outcome.
+RULE 8 — LAUNCH IS A SEQUENCE NOT A DATE (Jeff Walker + Luke Johnson): Phase 1 pre-launch 4 to 6 weeks before — problem awareness only, no selling. Phase 2 build 2 to 3 weeks — social proof, anticipation, authority, community. Phase 3 launch event — urgency, deadline, one CTA. June content feeds July clients.
+RULE 9 — HOOK STORY OFFER (Brunson): Every piece needs all three. Hook stops scroll — pain-first, specific, pattern-interrupt. Story uses Epiphany Bridge: Backstory to Desire to Wall to Epiphany to Result. Offer is one clear specific action with reason to act now.
+RULE 10 — ANTI-GENERIC CHECKLIST: No vague outcome language, no generic positioning, no AI-sounding tips, no CTA without urgency, no content that belongs to any coach, no offer without specific pain AND measurable outcome.`;
+
+// ── API ────────────────────────────────────────────────────────────────────
+async function api(system, user, maxTok=2000) {
+  const r = await fetch('https://ptma-planner.nikandantptma.workers.dev/api/chat', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens: maxTok,
+      system: system,
+      messages:[{role:'user',content:user}]
+    })
+  });
+  const d = await r.json();
+  const t = (d.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
+  try {
+    const clean = t.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    try { return JSON.parse(clean); } catch(e1) {
+      const start = clean.indexOf('{');
+      const end = clean.lastIndexOf('}');
+      if(start !== -1 && end !== -1) return JSON.parse(clean.slice(start, end+1));
+      return null;
+    }
+  } catch { return null; }
+}
+
+// ── CONTEXT ────────────────────────────────────────────────────────────────
+function lCtx() {
+  if (!S.lang || S.lang==='skipped') return '';
+  const l=S.lang;
+  return `\nCLIENT LANGUAGE — inject these exact phrases into all outputs:\nPain: ${(l.painPhrases||[]).slice(0,5).join(' | ')}\nDesire: ${(l.desirePhrases||[]).slice(0,4).join(' | ')}\nObjections: ${(l.objections||[]).slice(0,3).join(' | ')}\nSummary: ${l.summary||''}`;
+}
+function vCtx() {
+  if (!S.voice || S.voice==='skipped') return '';
+  const v=S.voice;
+  return `\nCOACH VOICE — every output must sound like this person:\nTone: ${v.tone} | Energy: ${v.energyLevel} | Formality: ${v.formality}\nOpener style: ${v.openerStyle}\nSignature phrases: ${(v.signaturePhrases||[]).join(' | ')}\nNever use: ${(v.avoidWords||[]).join(', ')}\nVoice: ${v.voiceSummary}`;
+}
+function bf() {
+  return {
+    niche: document.getElementById('f_niche').value,
+    offer: document.getElementById('f_offer').value,
+    price: document.getElementById('f_price').value,
+    goal:  document.getElementById('f_goal').value,
+    ltv:   document.getElementById('f_ltv')?.value || '',
+    obj:   document.getElementById('f_obj').value,
+    month: document.getElementById('f_month').value,
+    start: document.getElementById('f_start').value,
+    launch:document.getElementById('f_launch').value,
+    f2f:   S.f2f, opts: S.opts
+  };
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+function showTab(n) {
+  S.tab=n;
+  document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===n));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n));
+  document.getElementById('loading').classList.remove('active');
+}
+
+// ── TOGGLES ────────────────────────────────────────────────────────────────
+function setF2F(v) {
+  S.f2f=v;
+  document.getElementById('tog_f2f').className   ='toggle '+(v?'on-cyan':'');
+  document.getElementById('tog_online').className='toggle '+(!v?'on-cyan':'');
+}
+function toggleOpt(k) {
+  S.opts[k]=!S.opts[k];
+  document.getElementById('tog_'+k).className='toggle '+(S.opts[k]?'on-gold':'');
+  if(k==='meta') document.getElementById('metaTab').style.display=S.opts.meta?'':'none';
+  if(k==='manychat') document.getElementById('manychatTab').style.display=S.opts.manychat?'':'none';
+}
+
+// ── FILES ──────────────────────────────────────────────────────────────────
+
+
+
+// ── LANGUAGE ANALYSIS ──────────────────────────────────────────────────────
+async function analyseLang() {
+  const fileInput = document.getElementById('langFile');
+  const pasteText = document.getElementById('langText').value.trim();
+  let combined = pasteText;
+  if(fileInput.files && fileInput.files[0]) {
+    combined = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = function() {
+        try {
+          const text = new TextDecoder('utf-8').decode(new Uint8Array(reader.result));
+          resolve(text + (pasteText ? '\n\n' + pasteText : ''));
+        } catch(err) { resolve(pasteText); }
+      };
+      reader.onerror = function() { resolve(pasteText); };
+      reader.readAsArrayBuffer(fileInput.files[0]);
+    });
+  }
+  if(!combined){alert('Please upload a file or paste some text first.');return;}
+  const btn=document.querySelector('#langCard .btn-primary');
+  const orig=btn.textContent;btn.textContent='Analysing... please wait';btn.disabled=true;
+  try{
+    const trimmed = combined.length > 3000 ? combined.substring(0,3000) : combined;
+    const rawResp = await fetch('https://ptma-planner.nikandantptma.workers.dev/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:2000,
+        system:'You are a customer language expert. Return ONLY valid JSON. Nothing else.',
+        messages:[{role:'user',content:'Mine client words from this data. Return ONLY this JSON:\n{"painPhrases":[],"desirePhrases":[],"objections":[],"identityLanguage":[],"transformationPhrases":[],"keyThemes":[],"summary":""}\n\nData:\n'+trimmed}]
+      })
+    });
+    const rawData = await rawResp.json();
+    const rawText = (rawData.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
+    if(rawData.error){
+      alert('API returned error: '+JSON.stringify(rawData.error).substring(0,150));
+      return;
+    }
+    if(!rawText){
+      alert('API returned empty response. HTTP status: '+rawResp.status);
+      return;
+    }
+    const clean = rawText.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+    try {
+      const r = JSON.parse(clean);
+      S.lang=r;renderLangResult(r);
+    } catch(parseErr) {
+      alert('Parse failed. Response was: '+rawText.substring(0,200));
+    }
+  }catch(e){alert('Error type: '+e.name+' | Message: '+e.message);}
+  finally{btn.textContent=orig;btn.disabled=false;}
+}
+function renderLangResult(r) {
+  document.getElementById('langCard').style.display='none';
+  document.getElementById('langResult').style.display='block';
+  document.getElementById('langResultInner').innerHTML=`
+    <p style="font-size:13px;color:var(--textMid);margin-bottom:12px;line-height:1.6">${r.summary||''}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+      ${(r.painPhrases||[]).map(p=>`<span class="badge badge-red">${p}</span>`).join('')}
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      ${(r.desirePhrases||[]).map(p=>`<span class="badge badge-green">${p}</span>`).join('')}
+    </div>`;
+  updateBadges();
+}
+function handleLangFile(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onloadend = function() {
+    try {
+      const text = new TextDecoder('utf-8').decode(new Uint8Array(reader.result));
+      const existing = document.getElementById('langText').value;
+      document.getElementById('langText').value = existing ? existing + '\n\n' + text : text;
+    } catch(err) {}
+  };
+  reader.readAsArrayBuffer(file);
+}
+function handleVoiceFile(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onloadend = function() {
+    try {
+      const text = new TextDecoder('utf-8').decode(new Uint8Array(reader.result));
+      const existing = document.getElementById('voiceText').value;
+      document.getElementById('voiceText').value = existing ? existing + '\n\n' + text : text;
+    } catch(err) {}
+  };
+  reader.readAsArrayBuffer(file);
+}
+function loadLangFile(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onloadend = function() {
+    const text = typeof reader.result === 'string' ? reader.result : new TextDecoder().decode(reader.result);
+    const existing = document.getElementById('langText').value;
+    document.getElementById('langText').value = existing ? existing + '\n\n' + text : text;
+  };
+  if(file.name.endsWith('.pdf')) {
+    alert('PDF files cannot be read directly. Please copy the text from your PDF and paste it into the box below.');
+    return;
+  }
+  reader.readAsText(file, 'UTF-8');
+}
+function loadVoiceFile(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onloadend = function() {
+    const text = typeof reader.result === 'string' ? reader.result : new TextDecoder().decode(reader.result);
+    const existing = document.getElementById('voiceText').value;
+    document.getElementById('voiceText').value = existing ? existing + '\n\n' + text : text;
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+function skipLang(){S.lang='skipped';updateBadges();showTab(1);}
+function resetLang(){S.lang=null;document.getElementById('langCard').style.display='block';document.getElementById('langResult').style.display='none';updateBadges();}
+
+// ── VOICE ANALYSIS ─────────────────────────────────────────────────────────
+async function analyseVoice() {
+  const fileInputV = document.getElementById('voiceFile');
+  const pasteTextV = document.getElementById('voiceText').value.trim();
+  let combined = pasteTextV;
+  if(fileInputV.files && fileInputV.files[0]) {
+    combined = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = function() {
+        try {
+          const text = new TextDecoder('utf-8').decode(new Uint8Array(reader.result));
+          resolve(text + (pasteTextV ? '\n\n' + pasteTextV : ''));
+        } catch(err) { resolve(pasteTextV); }
+      };
+      reader.onerror = function() { resolve(pasteTextV); };
+      reader.readAsArrayBuffer(fileInputV.files[0]);
+    });
+  }
+  if(!combined){alert('Please upload a file or paste some text first.');return;}
+  const btn=document.querySelector('#voiceCard .btn-primary');
+  const orig=btn.textContent;btn.textContent='Extracting... please wait';btn.disabled=true;
+  try{
+    const trimmed = combined.length > 3000 ? combined.substring(0,3000) : combined;
+    const prompt=`Analyse this coach content and extract their voice. Return ONLY valid JSON with no other text:
+{"tone":"","signaturePhrases":[],"openerStyle":"","closerStyle":"","energyLevel":"","formality":"","keyWords":[],"avoidWords":[],"stanceStyle":"","voiceSummary":""}
+
+Content:
+`+trimmed;
+    const r=await api('You are a brand voice analyst. Return ONLY valid JSON. Nothing else.',prompt);
+    if(r){S.voice=r;renderVoiceResult(r);}
+    else{
+      const simple = await api('Return ONLY valid JSON.',`Extract the voice style from this content. Return ONLY:
+{"tone":"direct/warm/etc","signaturePhrases":["phrase1"],"openerStyle":"how they start","closerStyle":"how they end","energyLevel":"high/medium/low","formality":"casual/semi-formal/professional","keyWords":[],"avoidWords":[],"stanceStyle":"opinionated/neutral","voiceSummary":"one sentence"}
+
+Content:
+`+trimmed.substring(0,1000));
+      if(simple){S.voice=simple;renderVoiceResult(simple);}
+      else{alert('Could not analyse. Please paste a smaller amount of text directly into the box.');}
+    }
+  }catch(e){alert('Error: '+e.message+'. Please try again.');}
+  finally{btn.textContent=orig;btn.disabled=false;}
+}
+function renderVoiceResult(r) {
+  document.getElementById('voiceCard').style.display='none';
+  document.getElementById('voiceResult').style.display='block';
+  document.getElementById('voiceResultInner').innerHTML=`
+    <p style="font-size:13px;color:var(--textMid);margin-bottom:12px;line-height:1.6">${r.voiceSummary||''}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      ${[r.tone,r.energyLevel,r.formality].filter(Boolean).map(t=>`<span class="badge badge-purple">${t}</span>`).join('')}
+    </div>
+    <p style="font-size:12px;color:var(--textSub);margin-top:10px">Signature phrases: <span style="color:var(--textMid)">${(r.signaturePhrases||[]).join(' · ')}</span></p>`;
+  updateBadges();
+}
+function skipVoice(){S.voice='skipped';updateBadges();showTab(2);}
+function resetVoice(){S.voice=null;document.getElementById('voiceCard').style.display='block';document.getElementById('voiceResult').style.display='none';updateBadges();}
+
+// ── BADGES ─────────────────────────────────────────────────────────────────
+function updateBadges() {
+  const bs=[];
+  if(S.lang&&S.lang!=='skipped') bs.push('<span class="badge badge-green">✓ Client language</span>');
+  if(S.voice&&S.voice!=='skipped') bs.push('<span class="badge badge-purple">✓ Coach voice</span>');
+  if(Object.values(S.res).some(Boolean)) bs.push('<span class="badge badge-navy">⚡ PTMA Standard active</span>');
+  document.getElementById('headerBadges').innerHTML=bs.join('');
+}
+
+// ── GENERATION ─────────────────────────────────────────────────────────────
+async function generate() {
+  const b=bf();
+  if(!b.niche||!b.offer){alert('Please fill in your niche and offer name before generating.');return;}
+
+  // Show loading, hide pages
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('loading').classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+
+  // Animate steps
+  let si=0;
+  const st=setInterval(()=>{
+    if(si>0){const el=document.getElementById(`step${si-1}`);if(el){el.className='step done';el.querySelector('.step-dot').style.background='var(--green)';}}
+    if(si<6){const el=document.getElementById(`step${si}`);if(el){el.className='step active';}}
+    si++;
+    if(si>5) clearInterval(st);
+  },1800);
+
+  const ctx=lCtx()+vCtx();
+  const sys=`${PTMA_STANDARD}${ctx}\n\nYou are an expert fitness business campaign strategist. Return ONLY compact JSON. No preamble. No markdown fences. Apply every PTMA rule to every output.`;
+
+  try {
+    const st2 = await api(sys,pStrat(b),2000);
+    if(!st2) throw new Error('Strategy API returned null. Check console.');
+    const lg  = await api(sys,pLead(b),2000);
+    const ct  = await api(sys,pContent(b),4000);
+    const em  = await api(sys,pEmail(b),3000);
+    const dm  = await api(sys,pDM(b),2000);
+    const mc  = b.opts.manychat ? await api('You are an expert ManyChat automation strategist for fitness coaches. Apply PTMA principles. Return ONLY compact JSON. No preamble.',pManyChat(b),2000) : null;
+    const mt  = b.opts.meta ? await api(sys,pMeta(b),2000) : null;
+    clearInterval(st);
+    document.querySelectorAll('.loading .step').forEach(s=>{s.className='step done';s.querySelector('.step-dot').style.background='var(--green)';});
+    S.res={strat:st2,lead:lg,content:ct,email:em,dm,manychat:mc||null,meta:mt||null};
+    await new Promise(r=>setTimeout(r,600));
+    rStrat(st2); rLead(lg); rContent(ct); rEmail(em); rDM(dm); if(mc)rManyChat(mc,b); if(mt)rMeta(mt,b);
+    updateBadges();
+    document.getElementById('loading').classList.remove('active');
+    showTab(3);
+  } catch(e) {
+    clearInterval(st);
+    document.getElementById('loading').classList.remove('active');
+    showTab(2);
+    alert('Error: ' + e.message + ' — Please screenshot this and send to PTMA support.');
+  }
+}
+
+// ── PROMPTS ────────────────────────────────────────────────────────────────
+function pStrat(b){
+  const units = b.price && b.goal ? Math.ceil(parseInt(b.goal)/parseInt(b.price)) : null;
+  const goalStr = b.goal || 'TBC';
+  const priceStr = b.price || 'TBC';
+  const unitsStr = units || 'TBC';
+  const revenueNote = units ? 'Revenue goal: £'+b.goal+' = exactly '+units+' clients at £'+b.price+' each. KPIs must hit this exactly.' : '';
+  const kpis = JSON.stringify([
+    'Revenue goal: £'+goalStr,
+    'Units needed: '+unitsStr+' at £'+priceStr+' each',
+    'Conversion rate needed to hit target',
+    'Lead gen volume required',
+    'Content reach target'
+  ]);
+  return 'Campaign strategy. Niche: '+b.niche+' | Offer: "'+b.offer+'"'+(b.price?' at £'+b.price:'')+' | Objective: '+b.obj+' | Month: '+b.month+' | Delivery: '+(b.f2f?'F2F+Online':'Online only')+(revenueNote?'\n'+revenueNote:'')+
+    '\nReturn: {"campaignName":"","whyStatement":"","coreMessage":"","clientHero":"","coachGuideRole":"","threePains":{"external":"","internal":"","philosophical":""},"valueStack":"","phases":[{"phase":"","timing":"","objective":"","contentFocus":"","trigger":""}],"kpis":'+kpis+',"standardCheck":""}';
+}
+
+function pLead(b){return `Lead gen + FEO. Niche: ${b.niche} | Offer: "${b.offer}" | Objective: ${b.obj} | Month: ${b.month} | Delivery: ${b.f2f?'F2F+Online':'Online only'}
+Return: {"leadMagnet":{"name":"","format":"","pain":"","outcome":"","bridge":"","hook":"","valueCheck":""},"feo":{"name":"","format":"","price":"","duration":"","pain":"","outcome":"","decisionMoment":"","valueEquation":""},"reactivationOption":{"trigger":"","offer":"","message":""}}`;}
+
+function pContent(b){return `Full 4-week content plan. Niche: ${b.niche} | Offer: "${b.offer}" | Month: ${b.month} | Objective: ${b.obj}
+Return: {"contentRatio":"","pillars":[{"pillar":"","purpose":"jab or right hook","why":"","postFrequency":""}],"weeklyPlan":[{"week":1,"theme":"","posts":[{"day":"","pillar":"","format":"Reel/Carousel/Story/Talking Head","hook":"","storyArc":"","cta":"","documentPrompt":"","whyItWorks":""}]}],"gymFloorContent":[]}
+Build all 4 weeks. 4 posts per week minimum.`;}
+
+function pEmail(b){return `6-email nurture sequence. Niche: ${b.niche} | Offer: "${b.offer}" | Month: ${b.month}
+Return: {"sequence":[{"emailNum":1,"timing":"","purpose":"","subjectLine":"","hook":"","storyAngle":"","bodyOutline":[],"cta":"","jab_or_hook":"jab","standardCheck":""}]}
+Email 1 deliver+trust(jab). Email 2 teach something specific(jab). Email 3 client Epiphany Bridge story(jab). Email 4 handle top objection(jab). Email 5 coach WHY(jab). Email 6 FEO invitation with urgency(right hook).`;}
+
+function pDM(b){return `DM scripts suite. Niche: ${b.niche} | Offer: "${b.offer}" | Month: ${b.month}
+Return: {"coldOutreach":{"opener":"","followUp":""},"warmLeadScript":{"opener":"","valueAdd":"","bridge":"","closingScript":""},"objectionHandles":[{"objection":"","response":""},{"objection":"","response":""},{"objection":"","response":""}],"reactivationDM":{"target":"","opener":"","offer":""},"gymFloorConversation":{"opener":"","bridge":"","followUp":""}}`;}
+
+function pManyChat(b){
+  return 'ManyChat automation flow. Niche: '+b.niche+' | Offer: "'+b.offer+'" | Month: '+b.month+'\nReturn: {"welcomeFlow":{"trigger":"","opener":"","quickReplies":[],"leadCapture":""},"leadMagnetFlow":{"trigger":"","deliveryMessage":"","followUp1":"","followUp2":"","bridgeToFEO":""},"gymFloorFlow":{"trigger":"","opener":"","qualifier":"","bookingCTA":""},"broadcastMessages":[{"timing":"","purpose":"","message":"","quickReplies":[]}],"keywordTriggers":[{"keyword":"","response":"","action":""}]}';
+}
+
+function pMeta(b){
+  const ltv = b.ltv ? parseInt(b.ltv) : null;
+  const price = b.price ? parseInt(b.price) : null;
+  const ltvNote = ltv && price ? 'Client LTV: \u00a3'+b.ltv+'. Max CPL based on LTV: \u00a3'+(ltv*0.2).toFixed(0)+' (20% CAC). Max CPL based on front end: \u00a3'+(price*0.3).toFixed(0)+' (30% CAC). Show CPL ranges using both.' : '';
+  return 'Meta advertising. Niche: '+b.niche+' | Offer: "'+b.offer+'"'+(b.price?' at \u00a3'+b.price:'')+' | Objective: '+b.obj+' | Month: '+b.month+(ltvNote?' | '+ltvNote:'')+
+    '\nReturn: {"coldAd":{"campaignObjective":"","primaryText":"","headline":"","description":"","ctaButton":"","creativeDirection":"","audienceNotes":""},"warmRetarget":{"audience":"","primaryText":"","headline":"","ctaButton":"","budgetNote":""},"leadForm":{"formHeadline":"","introParagraph":"","questions":[],"thankYouMessage":"","followUpAction":""},"budgetFramework":{"dailyBudget":"","flightDates":"","expectedCPL":"","expectedCPLBasedOnLTV":"","expectedConversionRate":"","breakEven":"","ltvNote":""}}';
+}
+// ── RENDER HELPERS ─────────────────────────────────────────────────────────
+function stdBanner(){return `<div class="standard-banner"><div class="mark">⚡</div><div><div class="title">Generated to The PTMA Standard</div><div class="sub">Hormozi · Jeff Walker · StoryBrand · Sinek · Vaynerchuk · Brunson · Luke Johnson · Simon Booth · FMA · James Smith</div></div></div>`;}
+
+function cp(id,text){return `<button class="btn-copy" id="cp_${id}" onclick="doCopy('${id}',\`${(text||'').replace(/`/g,'\\`').replace(/\n/g,'\\n')}\`)">Copy</button>`;}
+function doCopy(id,text){navigator.clipboard.writeText(text.replace(/\\n/g,'\n'));const b=document.getElementById('cp_'+id);b.textContent='✓ Copied';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied');},2000);}
+
+// ── RENDER STRATEGY ────────────────────────────────────────────────────────
+function rStrat(d){
+  if(!d){document.getElementById('stratOut').innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">Strategy could not be generated</div><div class="empty-sub">Try regenerating</div></div>';return;}
+  let h=stdBanner();
+  if(d.campaignName){
+    const ct=`${d.campaignName}\n\n${d.whyStatement||''}\n\n${d.coreMessage||''}`;
+    h+=`<div class="card card-cyan"><div class="output-row">${cp('st1',ct)}</div><div class="campaign-name">${d.campaignName}</div>${d.whyStatement?`<p style="font-size:13px;color:var(--textMid);font-style:italic;margin-bottom:8px">WHY: ${d.whyStatement}</p>`:''} ${d.coreMessage?`<p style="font-size:15px;font-weight:500;color:var(--navy);line-height:1.6">${d.coreMessage}</p>`:''}</div>`;
+  }
+  if(d.threePains){
+    h+=`<div class="card"><div class="section-label">Three Levels of Client Pain — StoryBrand</div><div class="pain-grid"><div class="pain-box ext"><div class="pain-label">External</div><div class="pain-text">${d.threePains.external||''}</div></div><div class="pain-box int"><div class="pain-label">Internal</div><div class="pain-text">${d.threePains.internal||''}</div></div><div class="pain-box phi"><div class="pain-label">Philosophical</div><div class="pain-text">${d.threePains.philosophical||''}</div></div></div></div>`;
+  }
+  if(d.phases?.length){
+    h+=`<div class="card"><div class="section-label">Campaign Phases — Jeff Walker Launch Sequence</div>${d.phases.map(p=>`<div class="phase"><div class="phase-title">${p.phase}</div><div class="phase-timing">${p.timing}</div><div class="kv"><div class="k">Objective</div><div class="v">${p.objective}</div></div><div class="kv"><div class="k">Content Focus</div><div class="v">${p.contentFocus}</div></div><div class="kv"><div class="k">Mental Trigger</div><div class="v v-gold">${p.trigger}</div></div></div>`).join('')}</div>`;
+  }
+  if(d.kpis?.length){
+    h+=`<div class="kpi-row">${d.kpis.map(k=>`<div class="kpi-card"><div class="kpi-label">${k}</div></div>`).join('')}</div>`;
+  }
+  if(d.standardCheck){
+    h+=`<div class="card card-green"><div class="section-label">PTMA Standard Check</div><p style="font-size:13px;color:var(--textMid);line-height:1.6">${d.standardCheck}</p></div>`;
+  }
+  document.getElementById('stratOut').innerHTML=h;
+}
+
+// ── RENDER LEAD GEN ────────────────────────────────────────────────────────
+function rLead(d){
+  if(!d) return;
+  let h=stdBanner();
+  if(d.leadMagnet){
+    const lm=d.leadMagnet;
+    const isPass=(lm.valueCheck||'').toLowerCase().startsWith('yes');
+    h+=`<div class="card card-green"><div class="output-row"><span class="badge badge-green">Attention Offer — Lead Magnet</span>${cp('lm1',Object.values(lm).join('\n'))}</div><div class="card-title">${lm.name}</div><p style="font-size:13px;color:var(--textMid);font-style:italic;margin-bottom:14px">"${lm.hook}"</p>${[['Format',lm.format],['Pain solved',lm.pain],['Quick win',lm.outcome],['Bridge to FEO',lm.bridge]].map(([k,v])=>`<div class="kv"><div class="k">${k}</div><div class="v">${v||''}</div></div>`).join('')}<div style="padding:10px 14px;background:${isPass?'var(--greenLight)':'var(--amberLight)'};border:1px solid ${isPass?'var(--greenBorder)':'var(--amberBorder)'};border-radius:8px;margin-top:12px;font-size:12px;color:${isPass?'var(--green)':'var(--amber)'}">Value check: ${lm.valueCheck}</div></div>`;
+  }
+  if(d.feo){
+    const feo=d.feo;
+    h+=`<div class="card card-gold"><div class="output-row"><span class="badge badge-gold">Conversion Offer — FEO</span>${cp('feo1',Object.values(feo).join('\n'))}</div><div class="card-title">${feo.name}</div>${[['Format',feo.format],['Price',feo.price],['Duration',feo.duration],['Pain addressed',feo.pain],['Measurable outcome',feo.outcome],['Decision moment',feo.decisionMoment]].map(([k,v])=>`<div class="kv"><div class="k">${k}</div><div class="v">${v||''}</div></div>`).join('')}${feo.valueEquation?`<p style="font-size:11px;color:var(--textSub);margin-top:10px">${feo.valueEquation}</p>`:''}</div>`;
+  }
+  if(d.reactivationOption){
+    const r=d.reactivationOption;
+    h+=`<div class="card"><div class="section-label">Reactivation Option</div><div class="kv"><div class="k">Who it is for</div><div class="v">${r.trigger}</div></div><div class="kv"><div class="k">Offer</div><div class="v">${r.offer}</div></div><div class="dm-bubble" style="margin-top:10px">${r.message}</div></div>`;
+  }
+  document.getElementById('leadOut').innerHTML=h;
+}
+
+// ── RENDER CONTENT ─────────────────────────────────────────────────────────
+function rContent(d){
+  if(!d) return;
+  let h=stdBanner();
+  if(d.contentRatio){
+    h+=`<div class="card card-cyan"><div class="section-label">Content Ratio — 80/20 Rule</div><p style="font-size:13px;color:var(--textMid)">${d.contentRatio}</p></div>`;
+  }
+  (d.weeklyPlan||[]).forEach(wk=>{
+    h+=`<div class="card"><div class="week-header"><span class="week-label">Week ${wk.week}</span><span class="week-theme">${wk.theme}</span></div>`;
+    (wk.posts||[]).forEach(p=>{
+      const ct=`${p.hook}\n\nStory: ${p.storyArc}\n\nCTA: ${p.cta}`;
+      h+=`<div class="post-card"><div class="post-top"><span class="post-day">${p.day}</span><span class="badge badge-cyan">${p.format}</span>${cp('p'+Math.random().toString(36).slice(2,7),ct)}</div><div class="post-hook">"${p.hook}"</div><div class="post-detail">Story arc: ${p.storyArc}</div><div class="post-detail" style="color:var(--teal)">CTA: ${p.cta}</div>${p.documentPrompt?`<div class="post-capture"><span>📹</span><span>Capture: ${p.documentPrompt}</span></div>`:''}</div>`;
+    });
+    h+=`</div>`;
+  });
+  if(d.gymFloorContent?.length){
+    h+=`<div class="card card-purple"><div class="section-label">Gym Floor Content — Simon Booth</div>${d.gymFloorContent.map(g=>`<div class="kv"><div class="v">📹 ${g}</div></div>`).join('')}</div>`;
+  }
+  document.getElementById('contentOut').innerHTML=h;
+}
+
+// ── RENDER EMAIL ───────────────────────────────────────────────────────────
+function rEmail(d){
+  if(!d) return;
+  let h=stdBanner();
+  (d.sequence||[]).forEach(em=>{
+    const isAsk=em.jab_or_hook==='right hook';
+    const ct=`Subject: ${em.subjectLine}\n\n${em.hook}\n\n${(em.bodyOutline||[]).join('\n')}`;
+    h+=`<div class="email-card ${isAsk?'ask':''}"><div class="output-row"><span class="badge ${isAsk?'badge-gold':'badge-green'}">${isAsk?'Right hook — ask':'Jab — value'}</span><span style="font-size:11px;color:var(--textSub)">${em.timing}</span>${cp('em'+em.emailNum,ct)}</div><div class="email-subject">${em.subjectLine}</div><div class="email-meta">${em.purpose}</div><p style="font-size:13px;color:var(--textMid);font-style:italic;margin-bottom:10px">"${em.hook}"</p>${(em.bodyOutline||[]).map(b=>`<p style="font-size:12px;margin-bottom:5px">· ${b}</p>`).join('')}<p style="font-size:13px;margin-top:10px"><span style="font-weight:600;color:var(--teal)">CTA: </span>${em.cta}</p></div>`;
+  });
+  document.getElementById('emailOut').innerHTML=h;
+}
+
+// ── RENDER DM ──────────────────────────────────────────────────────────────
+function rDM(d){
+  if(!d) return;
+  let h=stdBanner();
+  if(d.coldOutreach){
+    const co=d.coldOutreach;
+    h+=`<div class="card"><div class="output-row"><span class="badge badge-cyan">Cold Outreach</span>${cp('dm_c',`${co.opener}\n\n${co.followUp}`)}</div><div class="section-label">Opener</div><div class="dm-bubble">${co.opener}</div><div class="section-label" style="margin-top:14px">Follow-up — no reply after 48 hours</div><div class="dm-bubble">${co.followUp}</div></div>`;
+  }
+  if(d.warmLeadScript){
+    const wl=d.warmLeadScript;
+    h+=`<div class="card card-green"><div class="output-row"><span class="badge badge-green">Warm Lead Script</span>${cp('dm_w',`${wl.opener}\n\n${wl.valueAdd}\n\n${wl.bridge}\n\n${wl.closingScript}`)}</div>${[['Opener',wl.opener],['Value add first',wl.valueAdd],['Bridge to FEO',wl.bridge],['Close',wl.closingScript]].map(([k,v])=>`<div class="section-label" style="margin-top:12px">${k}</div><div class="dm-bubble">${v||''}</div>`).join('')}</div>`;
+  }
+  if(d.objectionHandles?.length){
+    h+=`<div class="card"><div class="section-label">Objection Handles</div>${d.objectionHandles.map(o=>`<div style="margin-bottom:18px"><p style="font-size:13px;color:var(--amber);font-weight:600;margin-bottom:8px">"${o.objection}"</p><div class="dm-bubble">${o.response}</div></div>`).join('')}</div>`;
+  }
+  if(d.gymFloorConversation){
+    const gf=d.gymFloorConversation;
+    h+=`<div class="card card-purple"><div class="section-label">Gym Floor Conversation</div>${[['How to start',gf.opener],['Bridge to contact',gf.bridge],['Follow-up DM after',gf.followUp]].map(([k,v])=>`<div class="section-label" style="margin-top:12px">${k}</div><div class="dm-bubble">${v||''}</div>`).join('')}</div>`;
+  }
+  if(d.reactivationDM){
+    const rd=d.reactivationDM;
+    h+=`<div class="card"><div class="section-label">Reactivation DM — ${rd.target||''}</div><div class="dm-bubble">${rd.opener}</div><p style="font-size:12px;color:var(--textSub);margin-top:8px">Reactivation offer: ${rd.offer}</p></div>`;
+  }
+  document.getElementById('dmOut').innerHTML=h;
+}
+
+// ── RENDER META ────────────────────────────────────────────────────────────
+function rManyChat(d,b){
+  if(!d)return;
+  let h=stdBanner();
+  if(d.welcomeFlow){
+    const wf=d.welcomeFlow;
+    const wfTxt=wf.opener+'\n\n'+wf.leadCapture;
+    h+='<div class="card card-cyan"><div class="output-row"><span class="badge badge-cyan">Welcome Flow</span>'+cp('mc_w',wfTxt)+'</div>';
+    h+='<div class="kv"><div class="k">Trigger</div><div class="v">'+wf.trigger+'</div></div>';
+    h+='<div class="dm-bubble">'+wf.opener+'</div>';
+    if(wf.quickReplies&&wf.quickReplies.length)h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">'+wf.quickReplies.map(function(r){return '<span class="badge badge-cyan">'+r+'</span>';}).join('')+'</div>';
+    h+='<div class="kv" style="margin-top:10px"><div class="k">Lead Capture</div><div class="v">'+wf.leadCapture+'</div></div></div>';
+  }
+  if(d.leadMagnetFlow){
+    const lm=d.leadMagnetFlow;
+    const lmTxt=lm.deliveryMessage+'\n\n'+(lm.followUp1||'')+'\n\n'+(lm.followUp2||'')+'\n\n'+(lm.bridgeToFEO||'');
+    h+='<div class="card card-green"><div class="output-row"><span class="badge badge-green">Lead Magnet Delivery Flow</span>'+cp('mc_lm',lmTxt)+'</div>';
+    var lmFields=[['Delivery',lm.deliveryMessage],['Follow-up 1',lm.followUp1],['Follow-up 2',lm.followUp2],['Bridge to FEO',lm.bridgeToFEO]];
+    lmFields.forEach(function(pair){h+='<div class="section-label" style="margin-top:12px">'+pair[0]+'</div><div class="dm-bubble">'+(pair[1]||'')+'</div>';});
+    h+='</div>';
+  }
+  if(d.gymFloorFlow){
+    const gf=d.gymFloorFlow;
+    h+='<div class="card card-purple"><div class="output-row"><span class="badge badge-purple">Gym Floor Flow</span>'+cp('mc_gf',(gf.opener||'')+'\n\n'+(gf.qualifier||'')+'\n\n'+(gf.bookingCTA||''))+'</div>';
+    var gfFields=[['Trigger',gf.trigger],['Opener',gf.opener],['Qualifier',gf.qualifier],['Booking CTA',gf.bookingCTA]];
+    gfFields.forEach(function(pair){h+='<div class="kv"><div class="k">'+pair[0]+'</div><div class="v">'+(pair[1]||'')+'</div></div>';});
+    h+='</div>';
+  }
+  if(d.broadcastMessages&&d.broadcastMessages.length){
+    h+='<div class="card card-amber"><div class="section-label">Broadcast Messages</div>';
+    d.broadcastMessages.forEach(function(m,i){
+      h+='<div style="margin-bottom:16px"><div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><span class="badge badge-amber">'+(m.timing||'')+'</span><span style="font-size:11px;color:var(--textSub)">'+(m.purpose||'')+'</span>'+cp('mc_b'+i,m.message||'')+'</div><div class="dm-bubble">'+(m.message||'')+'</div>';
+      if(m.quickReplies&&m.quickReplies.length)h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">'+m.quickReplies.map(function(r){return '<span class="badge badge-gold">'+r+'</span>';}).join('')+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+  if(d.keywordTriggers&&d.keywordTriggers.length){
+    h+='<div class="card"><div class="section-label">Keyword Triggers</div>';
+    d.keywordTriggers.forEach(function(t){
+      h+='<div style="margin-bottom:14px"><p style="font-size:12px;color:var(--teal);font-weight:700;margin-bottom:6px">Keyword: "'+(t.keyword||'')+'"</p><div class="dm-bubble">'+(t.response||'')+'</div><p style="font-size:11px;color:var(--textSub);margin-top:4px">Action: '+(t.action||'')+'</p></div>';
+    });
+    h+='</div>';
+  }
+  document.getElementById('manychatOut').innerHTML=h;
+}
+
+function rMeta(d,b){
+  if(!d) return;
+  let h=stdBanner();
+  if(d.budgetFramework){
+    const bf=d.budgetFramework;
+    let budgetHtml='<div class="card"><div class="section-label">Budget Framework + CPL Targets</div>';
+    if(bf.ltvNote)budgetHtml+='<div style="padding:10px 14px;background:var(--cyanLight);border:1px solid var(--cyanBorder);border-radius:8px;margin-bottom:14px;font-size:12px;color:var(--teal)">'+bf.ltvNote+'</div>';
+    const fields=[['Daily Budget',bf.dailyBudget,'v-gold'],['Flight Dates',bf.flightDates,'v'],['CPL Target (front end)',bf.expectedCPL,'v-green'],['CPL Target (LTV basis)',bf.expectedCPLBasedOnLTV,'v-cyan'],['Conversion Rate',bf.expectedConversionRate,'v'],['Break Even',bf.breakEven,'v']];
+    budgetHtml+='<div class="grid-2">'+fields.filter(([,v])=>v).map(([k,v,cls])=>'<div class="kv"><div class="k">'+k+'</div><div class="v '+(cls||'')+'">'+v+'</div></div>').join('')+'</div></div>';
+    h+=budgetHtml;
+  }
+  if(d.coldAd){
+    const ca=d.coldAd;
+    const init=(b.niche||'PT').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    h+=`<div class="card card-cyan"><div class="output-row"><span class="badge badge-cyan">Cold Audience Ad</span><span style="font-size:11px;color:var(--textSub)">${ca.campaignObjective}</span>${cp('meta_c',`PRIMARY TEXT:\n${ca.primaryText}\n\nHEADLINE: ${ca.headline}\n\nDESCRIPTION: ${ca.description}\n\nCTA: ${ca.ctaButton}`)}</div>
+    <div class="ad-wrap"><div class="ad-header"><div class="ad-avatar">${init}</div><div><div class="ad-name">${b.niche} Coach</div><div class="ad-tag">Sponsored</div></div></div>
+    <div class="ad-body">
+      <div class="ad-primary">${(ca.primaryText||'').replace(/\n/g,'<br>')}</div>
+      <div class="ad-image-area"><p style="font-size:12px;color:var(--textSub)">📹 Creative direction:<br>${ca.creativeDirection}</p></div>
+      <div class="ad-footer"><div><div class="ad-headline">${ca.headline}</div><div class="ad-description">${ca.description}</div></div><button class="ad-cta">${ca.ctaButton}</button></div>
+    </div></div>
+    ${ca.audienceNotes?`<div class="kv" style="margin-top:14px"><div class="k">Audience Notes</div><div class="v">${ca.audienceNotes}</div></div>`:''}</div>`;
+  }
+  if(d.warmRetarget){
+    const wr=d.warmRetarget;
+    h+=`<div class="card card-amber"><div class="output-row"><span class="badge badge-amber">Warm Retargeting Ad</span>${cp('meta_r',`${wr.primaryText}\n\nHeadline: ${wr.headline}`)}</div><div class="kv"><div class="k">Audience</div><div class="v">${wr.audience}</div></div><div class="dm-bubble" style="margin-top:10px">${wr.primaryText}</div><div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--card2);border-radius:8px;margin-top:10px"><div style="font-size:14px;font-weight:600">${wr.headline}</div><button class="ad-cta">${wr.ctaButton}</button></div><div class="kv" style="margin-top:12px"><div class="k">Budget Note</div><div class="v">${wr.budgetNote}</div></div></div>`;
+  }
+  if(d.leadForm){
+    const lf=d.leadForm;
+    h+=`<div class="card card-green"><div class="output-row"><span class="badge badge-green">Native Lead Form</span>${cp('meta_f',`Form: ${lf.formHeadline}\n\n${lf.introParagraph}\n\nQuestions:\n${(lf.questions||[]).join('\n')}\n\nThank you: ${lf.thankYouMessage}`)}</div><div class="card-title">${lf.formHeadline}</div><p style="font-size:13px;color:var(--textMid);margin:10px 0;line-height:1.6">${lf.introParagraph}</p><div class="section-label">Form Questions</div>${(lf.questions||[]).map((q,i)=>`<div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start"><span style="background:var(--cyanLight);color:var(--teal);border:1px solid var(--cyanBorder);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px">${i+1}</span><span style="font-size:13px">${q}</span></div>`).join('')}<div class="divider"></div><div class="kv"><div class="k">Thank You Message</div><div class="v">${lf.thankYouMessage}</div></div><div class="kv"><div class="k">Follow-up Action</div><div class="v v-cyan">${lf.followUpAction}</div></div></div>`;
+  }
+  document.getElementById('metaOut').innerHTML=h;
+}
+</script>
+
+
+
+</body>
+</html>
